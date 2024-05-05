@@ -8,7 +8,7 @@ green=$( tput setaf 2 );
 yellow=$( tput setaf 3 );
 normal=$( tput sgr 0 );
 
-# Logfile
+# Log file
 updatelog="/tmp/update.log"
 
 # Get Linux distribution
@@ -17,9 +17,9 @@ linuxdistro=`grep '^ID=' /etc/os-release | sed 's/ID=//g'`
 # Help screen
 USAGE="
 Usage: sudo ./update.sh [-drahy]
-    -d   Run apt full-upgrade (dist-upgrade)
-    -r   Run apt do-release-upgrade (Ubuntu)
-    -a   Don't run apt autoremove
+    -d   Run full-upgrade (dist-upgrade)
+    -r   Run do-release-upgrade (Ubuntu)
+    -a   Don't run autoremove
     -y   Reboot automatically if needed
     -h   Show this help screen
 "
@@ -38,8 +38,7 @@ done
 # Check whether script is being run as root
 if [ ${UID} != 0 ]; then
   echo "${red}
-This script must be run as root or with sudo permissions.
-Please run using sudo.${normal}
+This script must be run as root or with sudo permissions.${normal}
 "
   exit 1
 fi
@@ -51,9 +50,11 @@ if [[ -n $hOn ]]; then
 fi
 
 # Start update
-echo "Starting update: `date`
+echo "${yellow}#####   Running linux update script   #####
 
-Linux distribution: ${linuxdistro}
+Starting update: `date`
+
+Linux distribution: ${linuxdistro}${normal}
 " | tee ${updatelog}
 
 # Run apt update
@@ -128,7 +129,7 @@ echo -e "
 ${green}#####   UPDATE DONE   #####${normal}
 " | tee -a ${updatelog}
 echo "
-Update done: `date`
+${yellow}Update done: `date`${normal}
 " | tee ${updatelog}
 
 # Do reboot if needed
