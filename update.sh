@@ -16,8 +16,8 @@ linuxdistro=`grep '^ID=' /etc/os-release | sed 's/ID=//g'`
 
 # Help screen
 USAGE="
-Usage: sudo ./update.sh [-drahy]
-    -d   Run full-upgrade (dist-upgrade)
+Usage: sudo ./update.sh [-frahy]
+    -f   Run full-upgrade
     -r   Run do-release-upgrade (Ubuntu)
     -a   Don't run autoremove
     -y   Reboot automatically if needed
@@ -25,9 +25,9 @@ Usage: sudo ./update.sh [-drahy]
 "
 
 # Check command line args
-while getopts ":drahy" OPT; do
+while getopts ":frahy" OPT; do
   case ${OPT} in
-    d ) dOn=1 ;;
+    f ) dOn=1 ;;
     r ) rOn=1 ;;
     a ) aOff=1 ;;
     h ) hOn=1 ;;
@@ -59,22 +59,23 @@ Linux distribution: ${linuxdistro}${normal}
 
 # Run apt update
 echo -e "
-${green}#####   Updating packet database   #####${normal}
+${green}#####   Updating package database   #####${normal}
 " | tee -a ${updatelog}
 sudo apt update --allow-releaseinfo-change -y | tee -a ${updatelog}
 
-# Run apt upgrade
-echo -e "
-${green}#####   Upgrading OS   #####${normal}
-" | tee -a ${updatelog}
-sudo apt upgrade -y | tee -a ${updatelog}
-
-# Run apt full-upgrade
+# Run apt upgrade / full-upgrade
 if [[ -n $dOn ]]; then
+# Run apt full-upgrade
   echo -e "
-${green}#####   Dist upgrade / full upgrade   #####${normal}
+${green}#####   Upgrading OS - full upgrade   #####${normal}
 " | tee -a ${updatelog}
   sudo apt full-upgrade -y | tee -a ${updatelog}
+else
+# Run apt upgrade
+  echo -e "
+${green}#####   Upgrading OS   #####${normal}
+" | tee -a ${updatelog}
+  sudo apt upgrade -y | tee -a ${updatelog}
 fi
 
 # Run apt autoremove
@@ -82,7 +83,7 @@ if [[ -n $aOff ]]; then
   echo -e "
 ${green}#####   Starting autoremove   #####${normal}
 " | tee -a ${updatelog}
-  sudo apt autoremove -y | tee -a ${updatelog}
+  sudo apt autoremove -y --purge | tee -a ${updatelog}
 fi
 
 # Run apt autoclean and clean
@@ -130,7 +131,7 @@ ${green}#####   UPDATE DONE   #####${normal}
 " | tee -a ${updatelog}
 echo "
 ${yellow}Update done: `date`${normal}
-" | tee ${updatelog}
+" | tee -a ${updatelog}
 
 # Do reboot if needed
 if [ -f /var/run/reboot-required ]; then
