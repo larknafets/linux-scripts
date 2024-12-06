@@ -16,7 +16,7 @@ linuxdistro=`grep '^ID=' /etc/os-release | sed 's/ID=//g'`
 
 # Help screen
 USAGE="
-Usage: sudo ./update.sh [-frahy]
+Usage: [sudo] ./update.sh [-frahy]
     -f   Run full-upgrade
     -r   Run do-release-upgrade (Ubuntu)
     -a   Don't run autoremove
@@ -35,12 +35,18 @@ while getopts ":frahy" OPT; do
   esac
 done
 
-# Check whether script is being run as root
-if [ ${UID} != 0 ]; then
+# Check whether script is being run as root/sudo
+if [ $(id -u) -ne 0 ]; then
   echo "${red}
 This script must be run as root or with sudo permissions.${normal}
 "
   exit 1
+fi
+
+# run sudo command before command if user is not root
+sudo_cmd=""
+if [ `whoami` != root ]; then
+  sudo_cmd=sudo
 fi
 
 # Show help screen
@@ -61,7 +67,7 @@ Linux distribution: ${linuxdistro}${normal}
 echo -e "
 ${green}#####   Updating package database   #####${normal}
 " | tee -a ${updatelog}
-sudo apt update --allow-releaseinfo-change -y | tee -a ${updatelog}
+${sudo_cmd} apt update --allow-releaseinfo-change -y | tee -a ${updatelog}
 
 # Run apt upgrade / full-upgrade
 if [[ -n $dOn ]]; then
@@ -69,13 +75,13 @@ if [[ -n $dOn ]]; then
   echo -e "
 ${green}#####   Upgrading OS - full upgrade   #####${normal}
 " | tee -a ${updatelog}
-  sudo apt full-upgrade -y | tee -a ${updatelog}
+  ${sudo_cmd}  apt full-upgrade -y | tee -a ${updatelog}
 else
 # Run apt upgrade
   echo -e "
 ${green}#####   Upgrading OS   #####${normal}
 " | tee -a ${updatelog}
-  sudo apt upgrade -y | tee -a ${updatelog}
+  ${sudo_cmd}  apt upgrade -y | tee -a ${updatelog}
 fi
 
 # Run apt autoremove
@@ -83,24 +89,24 @@ if [[ -n $aOff ]]; then
   echo -e "
 ${green}#####   Starting autoremove   #####${normal}
 " | tee -a ${updatelog}
-  sudo apt autoremove -y --purge | tee -a ${updatelog}
+  ${sudo_cmd}  apt autoremove -y --purge | tee -a ${updatelog}
 fi
 
 # Run apt autoclean and clean
 echo -e "
 ${green}#####   Cleaning up   #####${normal}
 " | tee -a ${updatelog}
-sudo apt autoclean -y | tee -a ${updatelog}
-sudo apt clean | tee -a ${updatelog}
+${sudo_cmd}  apt autoclean -y | tee -a ${updatelog}
+${sudo_cmd}  apt clean | tee -a ${updatelog}
 
 # Update pihole and gravity-sync
 if [ -f /usr/local/bin/pihole ]; then
 echo -e "
 ${green}#####   Updating pihole and gravity-sync   #####${normal}
 " | tee -a ${updatelog}
-sudo pihole -up | tee -a ${updatelog}
+${sudo_cmd}  pihole -up | tee -a ${updatelog}
   if [ -f /usr/local/bin/gravity-sync ]; then
-    sudo gravity-sync update | tee -a ${updatelog}
+    ${sudo_cmd}  gravity-sync update | tee -a ${updatelog}
   fi
 fi
 
@@ -110,7 +116,7 @@ if [[ -n $rOn ]]; then
     echo -e "
 ${green}#####   Starting release upgrade (Ubuntu)   #####${normal}
 " | tee -a ${updatelog}
-    sudo do-release-upgrade -f DistUpgradeViewNonInteractive | tee -a ${updatelog}
+    ${sudo_cmd}  do-release-upgrade -f DistUpgradeViewNonInteractive | tee -a ${updatelog}
   fi
 fi
 
@@ -142,7 +148,7 @@ ${yellow}#####   Reboot required!   #####${normal}
     echo -e "
 ${yellow}#####   ... REBOOTING ...   #####${normal}
 " | tee -a ${updatelog}
-    sudo reboot
+    ${sudo_cmd}  reboot
   else
     echo -e "
 ${yellow}#####   Please reboot machine manually.   #####${normal}

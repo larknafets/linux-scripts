@@ -20,8 +20,20 @@ Log messages are saved to /tmp/update.log additionally. The log file is cleared 
 
 Run command from git with parameter "-h" for help screen:
 
+curl
+
     curl https://raw.githubusercontent.com/larknafets/linux-scripts/main/update.sh | sudo bash -s -- -h
+
+wget
+
+    wget -q -O - https://raw.githubusercontent.com/larknafets/linux-scripts/main/update.sh | sudo bash -s -- -h
 
 Run command from git with parameter "-f" for full-upgrade:
 
+curl
+
     curl https://raw.githubusercontent.com/larknafets/linux-scripts/main/update.sh | sudo bash -s -- -f
+
+wget
+
+    wget -q -O - https://raw.githubusercontent.com/larknafets/linux-scripts/main/update.sh | sudo bash -s -- -f
