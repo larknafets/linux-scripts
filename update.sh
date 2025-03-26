@@ -81,7 +81,7 @@ ${green}#####   Upgrading OS   #####${normal}" | tee -a ${updatelog}
 fi
 
 # Run apt autoremove
-if [[ -n $aOff ]]; then
+if [[ -z $aOff ]]; then
   echo -e "
 ${green}#####   Starting autoremove   #####${normal}" | tee -a ${updatelog}
   ${sudo_cmd}  apt autoremove -y --purge | tee -a ${updatelog}
