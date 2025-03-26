@@ -83,7 +83,7 @@ fi
 # Run apt autoremove
 if [[ -z $aOff ]]; then
   echo -e "
-${green}#####   Starting autoremove   #####${normal}" | tee -a ${updatelog}
+${green}#####   Removing not needed packages   #####${normal}" | tee -a ${updatelog}
   ${sudo_cmd}  apt autoremove -y --purge | tee -a ${updatelog}
 fi
 
