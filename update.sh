@@ -117,8 +117,6 @@ if [ -f ${updatelog} ]; then
   echo -e "
 ${green}#####   Checking for actionalbe messages   #####${normal}" | tee -a ${updatelog}
   egrep -wi --color 'warning|error|critical|reboot|restart|autoclean|autoremove' ${updatelog} | uniq
-  echo -e "
-${green}#####   Full log: ${updatelog}   #####${normal}"
 fi
 
 # Update done
@@ -141,6 +139,9 @@ ${yellow}#####   ... REBOOTING ...   #####${normal}" | tee -a ${updatelog}
 ${yellow}#####   Please reboot machine manually.   #####${normal}" | tee -a ${updatelog}
   fi
 fi
+
+echo -e "
+${green}#####   Full log: ${updatelog}   #####${normal}"
 
 # The end
 exit 0
