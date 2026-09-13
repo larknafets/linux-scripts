@@ -96,11 +96,8 @@ ${sudo_cmd}  apt clean | tee -a ${updatelog}
 # Update pihole and gravity-sync
 if [ -f /usr/local/bin/pihole ]; then
 echo -e "
-${green}#####   Updating pihole and gravity-sync   #####${normal}" | tee -a ${updatelog}
+${green}#####   Updating pihole   #####${normal}" | tee -a ${updatelog}
 ${sudo_cmd}  pihole -up | tee -a ${updatelog}
-  if [ -f /usr/local/bin/gravity-sync ]; then
-    ${sudo_cmd}  gravity-sync update | tee -a ${updatelog}
-  fi
 fi
 
 # Run do-release-upgrade for Ubuntu
