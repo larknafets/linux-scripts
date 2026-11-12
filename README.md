@@ -7,7 +7,6 @@ Linux update script.
 Options:
     
     -f   Run full-upgrade (dist-upgrade)
-    -r   Run do-release-upgrade (Ubuntu)
     -a   Don't run autoremove
     -y   Reboot automatically if needed
     -h   Show this help screen
